@@ -1,29 +1,11 @@
 import ee
-from pprint import pprint
+import constants as c
 ee.Initialize()
 #
 # DATA
 #
 DW=ee.ImageCollection("GOOGLE/DYNAMICWORLD/V1")
 
-
-#
-# CONSTANTS
-#
-CLASSES=[
-    "water", 
-    "trees", 
-    "grass", 
-    "flooded_vegetation", 
-    "crops",
-    "shrub_and_scrub", 
-    "built", 
-    "bare", 
-    "snow_and_ice"
-]
-MIN_CROP=2
-MIN_CROPISH=11
-CROP_VALUE=4
 
 
 #
@@ -38,9 +20,9 @@ def month_lulc(year,month,rtype):
   end=start.advance(1,'month')
   dw=DW.filterDate(start,end)
   if (rtype=='mean'):
-    probs=dw.select(CLASSES).mean()
+    probs=dw.select(c.CLASSES).mean()
   elif (rtype=='median'):
-    probs=dw.select(CLASSES).median()
+    probs=dw.select(c.CLASSES).median()
   lulc=probabilites_to_class(probs)
   return lulc 
 
@@ -55,7 +37,7 @@ def monthly_median_lulc(year,month):
 
 def is_crop(label):
   label=ee.Image(label)
-  return label.eq(CROP_VALUE)
+  return label.eq(c.CROP_VALUE)
 
 
 def is_cropish(label):
@@ -67,7 +49,8 @@ def crop_rule(monthly_ic,label):
   monthly_ic=ee.ImageCollection(monthly_ic)
   crop_count=ee.Image(monthly_ic.map(is_crop).reduce(ee.Reducer.sum())).rename(['crop_count'])
   cropish_count=ee.Image(monthly_ic.map(is_cropish).reduce(ee.Reducer.sum())).rename(['cropish_count'])
-  crop_im=crop_count.gte(MIN_CROP).And(cropish_count.gte(MIN_CROPISH)).multiply(CROP_VALUE).selfMask().rename(['label'])
+  crop_im=crop_count.gte(c.MIN_CROP).And(cropish_count.gte(c.MIN_CROPISH)).multiply(c.CROP_VALUE).selfMask().rename(['label'])
+  print('WARNING:TODO: DONT USE CONFIG FOR MIN_CROP/ISH')
   return ee.Image(label).where(crop_im,crop_im)
 
 
@@ -82,8 +65,8 @@ def annual_dw(year):
     # ANNUAL SQUASHES
     dw=DW.filterDate(start_date,start_date.advance(1,'year'))
     dw_mode=dw.select('label').mode()
-    dw_mean_label=probabilites_to_class(dw.select(CLASSES).mean())
-    dw_median_label=probabilites_to_class(dw.select(CLASSES).median())
+    dw_mean_label=probabilites_to_class(dw.select(c.CLASSES).mean())
+    dw_median_label=probabilites_to_class(dw.select(c.CLASSES).median())
     dw_monthly_mean_label_mode=dw_monthly_mean_labels.mode()
     dw_monthly_median_label_mode=dw_monthly_median_labels.mode()
     dw_median_cr=crop_rule(dw_monthly_median_label_mode,dw_median_label)

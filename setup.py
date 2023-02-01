@@ -3,7 +3,7 @@ setup(
   name = 'dwpoints',
   packages = ['dwpoints'],
   version = '0.0.0.1',
-  description = 'DW Points: Generate DW values for specific points',
+  description = 'DW Points: Generate Dynamic World land cover labels for specific points',
   author = 'Brookie Guzder-Williams',
   author_email = 'bguzder-williams@wri.org',
   url = 'https://github.com/wri/dwpoints',
@@ -18,8 +18,8 @@ setup(
   classifiers = [],
   entry_points={
       'console_scripts': [
-          'dwpoints=dwpoints.cli:cli',
-          'dwpointsemote=dwpoints.cli:cli'
+          # 'dwpoints=dwpoints.cli:cli',
+          # 'dwpointsemote=dwpoints.cli:cli'
       ]
   }
 )
