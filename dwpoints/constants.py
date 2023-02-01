@@ -5,7 +5,12 @@
 #
 LON_COLUMN='lon'
 LAT_COLUMN='lat'
-SQUASH_KEYS=[]
+SQUASH_KEYS=[
+    'dw_mode',
+    'dw_median_label',
+    'dw_monthly_median_label_mode',
+    'dw_median_cr'
+]
 NOISY=True
 MIN_CROP=2
 MIN_CROPISH=11
@@ -19,8 +24,8 @@ YEAR=2022
 #
 # PATHS
 #
-CONFIG_PATH='dwpts-config.json'
-BAK_CONFIG_PATH='{}.bak'.format(CONFIG_PATH)
+DWPTS_CONFIG_PATH='dwpts-config.json'
+BAK_CONFIG_PATH='{}.bak'.format(DWPTS_CONFIG_PATH)
 
 
 #
@@ -46,6 +51,7 @@ CONFIG_DICT={
 #
 # NOT CONFIGURABLE
 #
+DWPTS_CONFIG_EXISTS='DWPTS: config file exists. use `force=True` to overite'
 CRS='epsg:4326'
 SCALE=10
 MAX_PIX=9*4

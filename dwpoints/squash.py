@@ -1,11 +1,19 @@
+""" dwpoints.squash
+
+Public Method: `annual_dw` returns a dictionary of different dynamic world annual-squashes 
+
+Edit this file to add new squash layers.  
+
+"""
 import ee
 import constants as c
 ee.Initialize()
+
+
 #
 # DATA
 #
 DW=ee.ImageCollection("GOOGLE/DYNAMICWORLD/V1")
-
 
 
 #

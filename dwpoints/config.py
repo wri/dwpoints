@@ -1,24 +1,19 @@
 import os.path
 import yaml
-import dwpoints.utils as utils
-import dwpoints.constants as c
+import utils as utils
+import constants as c
+from copy import deepcopy
 #
 # DEFALUTS 
 #
-_DEFAULTS={
-    'port':c.PORT,
-    'remote_path':c.REMOTE_PATH,
-    'ssh_key':c.SSH_KEY,
-    'noisy':c.NOISY,
-    'auto_init':c.AUTO_INIT
-}
+_DEFAULTS=deepcopy(c.CONFIG_DICT)
 
 
 #
 # LOAD CONFIG
 #
-if os.path.exists(c.SUBLR_CONFIG_PATH):
-    _CONFIG=yaml.safe_load(open(c.SUBLR_CONFIG_PATH))
+if os.path.exists(c.DWPTS_CONFIG_PATH):
+    _CONFIG=yaml.safe_load(open(c.DWPTS_CONFIG_PATH))
 else:
     _CONFIG={}
 
@@ -30,24 +25,29 @@ def get(key):
 
 
 def generate(
-        port=c.PORT,
-        remote_path=c.REMOTE_PATH,
-        ssh_key=c.SSH_KEY,
+        year=c.YEAR,
+        lon=c.LON_COLUMN,
+        lat=c.LAT_COLUMN,
+        squash_keys=c.SQUASH_KEYS,
+        min_crop=c.MIN_CROP,
+        min_cropish=c.MIN_CROPISH,
         noisy=c.NOISY,
-        auto_init=c.AUTO_INIT,
         force=False):
     """ generate config file
     """
     config={
-        'port':port,
-        'remote_path':remote_path,
-        'ssh_key':ssh_key,
-        'noisy':noisy,
-        'auto_init':auto_init }
+        'year': year,
+        'lon': lon,
+        'lat': lat,
+        'squash_keys': squash_keys,
+        'min_crop': min_crop,
+        'min_cropish': min_cropish,
+        'noisy': noisy
+    }
     if not force and os.path.exists(c.SUBLR_CONFIG_PATH):
-        utils.log(c.SUBLR_CONFIG_EXISTS,True,level="ERROR")
+        utils.log(c.DWPTS_CONFIG_EXISTS,True,level="ERROR")
     else:
-        with open(c.SUBLR_CONFIG_PATH,'w+') as file:
+        with open(c.DWPTS_CONFIG_PATH,'w+') as file:
             file.write("# {}\n".format(c.SUBLR_CONFIG_COMMENT))
             file.write(yaml.safe_dump(config, default_flow_style=False))
         utils.log(c.SUBLR_CONFIG_CREATED,noisy)
