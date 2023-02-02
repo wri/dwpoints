@@ -6,7 +6,7 @@ Edit this file to add new squash layers.
 
 """
 import ee
-import constants as c
+import dwpoints.constants as c
 ee.Initialize()
 
 

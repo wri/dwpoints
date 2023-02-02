@@ -1,9 +1,10 @@
 import ee
-import squash
-import config
-import constants as c
-import utils as utils
 import pandas as pd
+from pprint import pprint
+import dwpoints.squash as squash
+import dwpoints.config as config
+import dwpoints.constants as c
+import dwpoints.utils as utils
 ee.Initialize()
 
 
@@ -46,32 +47,24 @@ def inpsect_row(row):
 
 def inspect_points(path):
   df=pd.read_csv(path)
-  print(df.to_dict('records'),'>>>')
+  print('SIZE',df.shape[0])
+  print(df.head().to_dict('records'),'>>>')
   df.loc[:,DW_COLS]=df.apply(inpsect_row,axis=1,result_type='expand')
   df_dict_list=df.to_dict('records')
-  print(df_dict_list,'<<<',type(df_dict_list))
+  print(len(df_dict_list),df_dict_list[:3],'<<<',type(df_dict_list))
   df_dict_list=ee.List(df_dict_list).getInfo()
-  print(df_dict_list,'<<<',type(df_dict_list))  
+  print(len(df_dict_list),df_dict_list[:3],'<<<',type(df_dict_list))
   df=pd.DataFrame(df_dict_list)
-  print(df.to_dict('records'),'>>>')
+  print(df.head().to_dict('records'),'>>>')
 
 
 
-inspect_points('TEMP.csv')
-
-# squashes=squash.annual_dw(2022)
-
-
-
-# lon=-82.45585937500002
-# lat=34.87213971567944
-
-# lon=-82.915298
-# lat=34.816375
-
-# for k,v in squashes.items():
-#   utils.log_info(msg=k,noisy=True,lon=lon,lat=lat,inspect=inspect(v,lon,lat,True))
-
+def run(*args,**kwargs):
+  print("RUN",args)
+  pprint(kwargs)
+  print('--'*50)
+  inspect_points('TEMP.csv')
+  # inspect_points('https://storage.googleapis.com/dynamic-world-public/dw-exports/point_data/dev_dw_sample_pts-100.csv')
 
 
 

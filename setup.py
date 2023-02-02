@@ -18,8 +18,7 @@ setup(
   classifiers = [],
   entry_points={
       'console_scripts': [
-          # 'dwpoints=dwpoints.cli:cli',
-          # 'dwpointsemote=dwpoints.cli:cli'
+          'dwpoints=dwpoints.cli:cli',
       ]
   }
 )

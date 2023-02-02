@@ -49,7 +49,7 @@ $ sublr --help
 
 ##### CONFIG
 
-Create custom default sublr config-values. Values can be updated directly through CLI, or you can edit the generated config file `dwpts.config.yaml` directly.
+Create custom default sublr config-values. Values can be updated directly through CLI, or you can edit the generated config file `dwpoints.config.yaml` directly.
 
 ...
 

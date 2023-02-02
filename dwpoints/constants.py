@@ -24,8 +24,8 @@ YEAR=2022
 #
 # PATHS
 #
-DWPTS_CONFIG_PATH='dwpts-config.json'
-BAK_CONFIG_PATH='{}.bak'.format(DWPTS_CONFIG_PATH)
+DWPOINTS_CONFIG_PATH='dwpoints-config.json'
+BAK_CONFIG_PATH='{}.bak'.format(DWPOINTS_CONFIG_PATH)
 
 
 #
@@ -51,7 +51,6 @@ CONFIG_DICT={
 #
 # NOT CONFIGURABLE
 #
-DWPTS_CONFIG_EXISTS='DWPTS: config file exists. use `force=True` to overite'
 CRS='epsg:4326'
 SCALE=10
 MAX_PIX=9*4
@@ -67,3 +66,12 @@ CLASSES=[
     "bare", 
     "snow_and_ice"
 ]
+
+
+#
+# COMMENT STRINGS
+#
+DWPOINTS_CONFIG_COMMENT="dwpoints: config"
+DWPOINTS_CONFIG_EXISTS="dwpoints.config.yaml exists.  use force=True to overwrite."
+DWPOINTS_CONFIG_CREATED="dwpoints.config.yaml created. edit file to change configuration"
+
