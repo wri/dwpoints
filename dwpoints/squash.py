@@ -1,8 +1,8 @@
-""" dwpoints.squash
+""" dwpoints.labels
 
-Public Method: `annual_dw` returns a dictionary of different dynamic world annual-squashes 
+Public Method: `annual_dw` returns a dictionary of different dynamic world annual-labels 
 
-Edit this file to add new squash layers.  
+Edit this file to add new labels layers.  
 
 """
 import ee

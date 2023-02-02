@@ -25,11 +25,11 @@ NOISY=config.get('noisy')
 #
 # INTERNAL
 #
-def _inpsect_row(row,lon,lat,cols):
+def _inpsect_row(row,lon,lat,cols,labels_dict):
     """ _inpsect_row
     Returns row-<dict> containing label values for each col in cols
     """
-    return { col: inspect(squashes[col],row[lon],row[lat]) for col in cols }
+    return { col: inspect(labels_dict[col],row[lon],row[lat]) for col in cols }
 
 
 def _prefix_path(prefix,path):
@@ -93,18 +93,28 @@ def run(
         noisy=NOISY,
         squash=SQUASH_KEYS):
     print("RUN",squash)
+    labels_dict=squash.annual_dw(year)
     if squash:
         squash=squash.split(',')
     else:
         squash=config.get('squash_keys')
     if not dest:
         dest=_prefix_path(prefix,src)
-    print(lon,lat,dest,squash)
-    print('--'*50)
-    df=pd.read_csv(path)
-    print('SIZE',df.shape[0])
-    # inspect_points(src,dest,year,lon,lat,min_crop,min_cropish,noisy,squash)
-
-
-
+    df=pd.read_csv(src)
+    utils.log('generating dynamic world point values',
+        year=year,
+        min_crop=min_crop,
+        min_cropish=min_cropish,
+        src=src,
+        dest=dest,
+        nb_points=df.shape[0],
+        squash_columns=squash)
+    df.loc[:,squash]=df.apply(
+        _inpsect_row,
+        axis=1,
+        result_type='expand',
+        lon=lon,lat=lat,cols=squash,labels_dict=labels_dict)
+    df_dict=df.to_dict('records')
+    df=pd.DataFrame(df_dict.getInfo())
+    df.to_csv(dest,index=False)
 
