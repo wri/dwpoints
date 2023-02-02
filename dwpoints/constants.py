@@ -15,10 +15,7 @@ NOISY=True
 MIN_CROP=2
 MIN_CROPISH=11
 YEAR=2022
-
-#
-# PRINT STRINGS
-#
+DEST_PREFIX='dwpoints'
 
 
 #
@@ -26,12 +23,6 @@ YEAR=2022
 #
 DWPOINTS_CONFIG_PATH='dwpoints-config.json'
 BAK_CONFIG_PATH='{}.bak'.format(DWPOINTS_CONFIG_PATH)
-
-
-#
-# STRING TEMPLATES
-#
-
 
 
 #
@@ -44,7 +35,8 @@ CONFIG_DICT={
     "squash_keys": SQUASH_KEYS,
     "min_crop": MIN_CROP,
     "min_cropish": MIN_CROPISH,
-    "noisy": NOISY
+    "noisy": NOISY,
+    "prefix": DEST_PREFIX
 }
 
 
