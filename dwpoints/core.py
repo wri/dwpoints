@@ -17,6 +17,8 @@ LAT_COLUMN=config.get('lat')
 MIN_CROP=config.get('min_crop')
 MIN_CROPISH=config.get('min_cropish')
 DEST_PREFIX=config.get('prefix')
+ACCURACY_DEST_PREFIX=config.get('acc_prefix')
+CONFUSION_DEST_PREFIX=config.get('cm_prefix')
 SQUASH_KEYS=config.get('squash_keys')
 NOISY=config.get('noisy')
 
@@ -124,5 +126,56 @@ def run(
     df=pd.DataFrame(df_dict_list.getInfo())
     df.to_csv(dest,index=False)
     utils.log(f'[{timer.stop()}] complete ({timer.delta()})')
+
+
+
+def accuracy(        
+        src,
+        prefix=ACCURACY_DEST_PREFIX,
+        noisy=NOISY,
+        squash=SQUASH_KEYS):
+    """ generate accuracy results in csv
+
+    Args:
+        - src<str>: path or url to source csv
+        - dest<str|None>: destination (if None uses `{prefix}.{src}`)
+        - prefix<str>: destination prefix (only used if dest not provided)
+        - noisy<bool>: print log statements
+        - squash<list<str>>: list of columns to use as squash keys
+
+    Action: 
+        accuracy results are saved to a csv
+    """
+    utils.log('TODO: Accuracy')
+    pass
+
+
+
+def confusion(        
+        src,
+        prefix=CONFUSION_DEST_PREFIX,
+        noisy=NOISY,
+        squash=SQUASH_KEYS):
+    """ generate confusion-matrix results in csvs
+
+    Args:
+        - src<str>: path or url to source csv
+        - dest<str|None>: destination (if None uses `{prefix}.{src}`)
+        - prefix<str>: destination prefix (only used if dest not provided)
+        - noisy<bool>: print log statements
+        - squash<list<str>>: list of columns to use as squash keys
+
+    Action: 
+        confusion matrices are saved to individual csv's for each
+        column in squash
+    """
+    utils.log('TODO: Confusion')
+    pass
+
+
+
+
+
+
 
 

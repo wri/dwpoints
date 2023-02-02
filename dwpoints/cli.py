@@ -15,6 +15,8 @@ LAT_COLUMN=config.get('lat')
 MIN_CROP=config.get('min_crop')
 MIN_CROPISH=config.get('min_cropish')
 DEST_PREFIX=config.get('prefix')
+ACCURACY_DEST_PREFIX=config.get('acc_prefix')
+CONFUSION_DEST_PREFIX=config.get('cm_prefix')
 NOISY=config.get('noisy')
 
 
@@ -84,6 +86,40 @@ def run(ctx,src,dest,year,lon,lat,min_crop,min_cropish,prefix,noisy,squash):
         squash=squash)
 
 
+@click.command(name='accuracy',help='generate accuracy results')
+@click.argument('src')
+@click.option(
+    '--prefix',
+    default=c.ACCURACY_DEST_PREFIX,
+    help='output file is `{prefix}.src-filename.csv`')
+@click.option(
+    '--noisy',
+    default=c.NOISY,
+    type=bool)
+@click.option(
+    '--squash',
+    default=None,
+    help='comma deliminated string of squash_keys (w/o spaces)')
+def accuracy(src,prefix,noisy,squash):
+    core.accuracy(src=src,prefix=prefix,noisy=noisy,squash=squash)
+
+
+@click.command(name='confusion',help='generate confusion matrices for specific squashes')
+@click.argument('src')
+@click.option(
+    '--prefix',
+    default=c.CONFUSION_DEST_PREFIX,
+    help='output files are `{prefix}.{squash_col}.src-filename.csv`')
+@click.option(
+    '--noisy',
+    default=c.NOISY,
+    type=bool)
+@click.option(
+    '--squash',
+    default=None,
+    help='comma deliminated string of squash_keys (w/o spaces)')
+def confusion(src,prefix,noisy,squash):
+    core.confusion(src=src,prefix=prefix,noisy=noisy,squash=squash)
 
 
 @click.command(name='config',help='generate config file')
@@ -135,7 +171,10 @@ def generate_config(year,lon,lat,min_crop,min_cropish,prefix,noisy,squash,force)
 # MAIN
 #
 cli.add_command(run)
+cli.add_command(accuracy)
+cli.add_command(confusion)
 cli.add_command(generate_config)
+
 
 
 if __name__ == '__main__':
