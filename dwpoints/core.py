@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 import pandas as pd
 from pprint import pprint
-import dwpoints.squash as squash
+import dwpoints.labels as labels
 import dwpoints.config as config
 import dwpoints.constants as c
 import dwpoints.utils as utils
@@ -46,18 +46,18 @@ def _prefix_path(prefix,path):
 #
 # PUBLIC
 #
-def inspect(labels,lon,lat):
-    """ inspect labels-squash at point lon,lat
+def inspect(label,lon,lat):
+    """ inspect label at point lon,lat
 
     Args:
-        - labels<ee.Image>: a single band "labels" ee.image
+        - label<ee.Image>: a single band "label" ee.image
         - lon<float>: longitude value 
         - lat<float>: latitude value 
 
-    returns <int> labels-label value at point lon,lat 
+    returns <int> label value at point lon,lat 
     """
     pt=ee.Geometry.Point(lon,lat)
-    sample_point=labels.rename(['label']).reproject(crs=c.CRS,scale=c.SCALE).reduceRegion(
+    sample_point=label.rename(['label']).reproject(crs=c.CRS,scale=c.SCALE).reduceRegion(
         reducer=ee.Reducer.firstNonNull(), 
         geometry=pt, 
         scale=c.SCALE, 
@@ -68,16 +68,16 @@ def inspect(labels,lon,lat):
 
 
 
-def inspect_points(src,dest,year,lon,lat,min_crop,min_cropish,noisy,squash):
-    df=pd.read_csv(path)
-    print(df.head().to_dict('records'),'>>>')
-    df.loc[:,DW_COLS]=df.apply(_inpsect_row,axis=1,result_type='expand')
-    df_dict_list=df.to_dict('records')
-    print(len(df_dict_list),df_dict_list[:3],'<<<',type(df_dict_list))
-    df_dict_list=ee.List(df_dict_list).getInfo()
-    print(len(df_dict_list),df_dict_list[:3],'<<<',type(df_dict_list))
-    df=pd.DataFrame(df_dict_list)
-    print(df.head().to_dict('records'),'>>>')
+# def inspect_points(src,dest,year,lon,lat,min_crop,min_cropish,noisy,squash):
+#     df=pd.read_csv(path)
+#     print(df.head().to_dict('records'),'>>>')
+#     df.loc[:,DW_COLS]=df.apply(_inpsect_row,axis=1,result_type='expand')
+#     df_dict_list=df.to_dict('records')
+#     print(len(df_dict_list),df_dict_list[:3],'<<<',type(df_dict_list))
+#     df_dict_list=ee.List(df_dict_list).getInfo()
+#     print(len(df_dict_list),df_dict_list[:3],'<<<',type(df_dict_list))
+#     df=pd.DataFrame(df_dict_list)
+#     print(df.head().to_dict('records'),'>>>')
 
 
 
@@ -92,8 +92,7 @@ def run(
         prefix=DEST_PREFIX,
         noisy=NOISY,
         squash=SQUASH_KEYS):
-    print("RUN",squash)
-    labels_dict=squash.annual_dw(year)
+    labels_dict=labels.annual_dw(year)
     if squash:
         squash=squash.split(',')
     else:
@@ -109,12 +108,18 @@ def run(
         dest=dest,
         nb_points=df.shape[0],
         squash_columns=squash)
+    timer=utils.Timer()
+    utils.log(f'[{timer.start()}] ...inspecting rows')
     df.loc[:,squash]=df.apply(
         _inpsect_row,
         axis=1,
         result_type='expand',
         lon=lon,lat=lat,cols=squash,labels_dict=labels_dict)
-    df_dict=df.to_dict('records')
-    df=pd.DataFrame(df_dict.getInfo())
+    utils.log(f'[{timer.time()}] ...earthengine request ({timer.state()})')
+    out=df.to_dict('records')
+    df_dict_list=ee.List(df.to_dict('records'))
+    df=pd.DataFrame(df_dict_list.getInfo())
     df.to_csv(dest,index=False)
+    utils.log(f'[{timer.stop()}] complete ({timer.delta()})')
+
 
