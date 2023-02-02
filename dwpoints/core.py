@@ -67,20 +67,6 @@ def inspect(label,lon,lat):
     return sample_point.getNumber('label')
 
 
-
-# def inspect_points(src,dest,year,lon,lat,min_crop,min_cropish,noisy,squash):
-#     df=pd.read_csv(path)
-#     print(df.head().to_dict('records'),'>>>')
-#     df.loc[:,DW_COLS]=df.apply(_inpsect_row,axis=1,result_type='expand')
-#     df_dict_list=df.to_dict('records')
-#     print(len(df_dict_list),df_dict_list[:3],'<<<',type(df_dict_list))
-#     df_dict_list=ee.List(df_dict_list).getInfo()
-#     print(len(df_dict_list),df_dict_list[:3],'<<<',type(df_dict_list))
-#     df=pd.DataFrame(df_dict_list)
-#     print(df.head().to_dict('records'),'>>>')
-
-
-
 def run(        
         src,
         dest=None,
@@ -92,7 +78,24 @@ def run(
         prefix=DEST_PREFIX,
         noisy=NOISY,
         squash=SQUASH_KEYS):
-    labels_dict=labels.annual_dw(year)
+    """ generate labels values for pts and labels in csv
+
+    Args:
+        - src<str>: path or url to source csv
+        - dest<str|None>: destination (if None uses `{prefix}.{src}`)
+        - year<int>: year to produce annual labels
+        - lon<str>: longitude column name 
+        - lat<str>: latitude column name 
+        - min_crop<int>: minimum number of crop months for crop-rule
+        - min_cropish<int>: minimum number of crop-ish months for crop-rule
+        - prefix<str>: destination prefix (only used if dest not provided)
+        - noisy<bool>: print log statements
+        - squash<list<str>>: list of columns to use as squash keys
+
+    Action: 
+        label values are saved to csv
+    """
+    labels_dict=labels.annual_dw(year,min_crop,min_cropish)
     if squash:
         squash=squash.split(',')
     else:

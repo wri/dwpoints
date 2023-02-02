@@ -53,19 +53,18 @@ def is_cropish(label):
   return is_crop(label).Or(label.eq(2).Or(label.eq(5).Or(label.eq(7))))
 
 
-def crop_rule(monthly_ic,label):
+def crop_rule(monthly_ic,label,min_crop,min_cropish):
   monthly_ic=ee.ImageCollection(monthly_ic)
   crop_count=ee.Image(monthly_ic.map(is_crop).reduce(ee.Reducer.sum())).rename(['crop_count'])
   cropish_count=ee.Image(monthly_ic.map(is_cropish).reduce(ee.Reducer.sum())).rename(['cropish_count'])
-  crop_im=crop_count.gte(c.MIN_CROP).And(cropish_count.gte(c.MIN_CROPISH)).multiply(c.CROP_VALUE).selfMask().rename(['label'])
-  print('WARNING:TODO: DONT USE CONFIG FOR MIN_CROP/ISH')
+  crop_im=crop_count.gte(min_crop).And(cropish_count.gte(min_cropish)).multiply(c.CROP_VALUE).selfMask().rename(['label'])
   return ee.Image(label).where(crop_im,crop_im)
 
 
 #
 # PUBLIC
 #
-def annual_dw(year):
+def annual_dw(year,min_crop=c.MIN_CROP,min_cropish=c.MIN_CROPISH):
     start_date=ee.Date.fromYMD(year,1,1)
     # MONTHLY ICS
     dw_monthly_mean_labels=ee.ImageCollection(ee.List.sequence(1,12).map(lambda m: monthly_mean_lulc(year,m)))
@@ -77,8 +76,8 @@ def annual_dw(year):
     dw_median_label=probabilites_to_class(dw.select(c.CLASSES).median())
     dw_monthly_mean_label_mode=dw_monthly_mean_labels.mode()
     dw_monthly_median_label_mode=dw_monthly_median_labels.mode()
-    dw_median_cr=crop_rule(dw_monthly_median_label_mode,dw_median_label)
-    dw_mean_cr=crop_rule(dw_monthly_mean_label_mode,dw_mean_label)
+    dw_median_cr=crop_rule(dw_monthly_median_label_mode,dw_median_label,min_crop,min_cropish)
+    dw_mean_cr=crop_rule(dw_monthly_mean_label_mode,dw_mean_label,min_crop,min_cropish)
     return {
         'dw_mode': dw_mode,
         'dw_mean_label': dw_mean_label,
