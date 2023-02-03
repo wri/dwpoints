@@ -4,7 +4,6 @@ _CLI for generating dynamic world points values for a number of different squash
 
 - [Install](#install)
 - [CLI](#cli)
-- [Example Walkthrough](#example)
 - [Config](#config)
 - [Docs](#docs)
 
@@ -102,7 +101,7 @@ This generated `dwpoints.dev_dw_sample_pts-500.csv`
 Now we can evaluate the accuracy and look at confusion matrices:
 
 ```bash
-$dwpoints accuracy dwpoints.dev_dw_sample_pts-500.csv label      
+$ dwpoints accuracy dwpoints.dev_dw_sample_pts-500.csv label      
 
 [INFO] DW_POINTS: generating aggrement assement
 ----------------------------------------------------------------------------------------------------
