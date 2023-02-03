@@ -67,4 +67,23 @@ def get_acc_df(df,label_col,pred_cols):
     return accs.join(counts)
 
 
+def get_cm_df(df,label_values,label_col,pred_col,dummy_prefix=c.DUMMY_PREFIX):
+    dummies=pd.DataFrame(df[label_col]).join(pd.get_dummies(df[pred_col],prefix=dummy_prefix))
+    cm=dummies.groupby(label_col).sum()
+    cm['total']=cm.sum(axis=1)
+    col_total=cm.sum(axis=0)
+    cm=pd.concat([cm,pd.DataFrame([col_total])]).astype(int)
+    cm.index=[str(v) for v in label_values]+['total']
+    return cm
+
+
+def normalize_cm(cm_df,label_values,dummy_prefix=c.DUMMY_PREFIX,by='columns'):
+    cols=[f'{dummy_prefix}_{v}' for v in label_values]
+    rows=[f'{v}' for v in label_values]
+    column_counts=cm_df.loc['total']
+    column_counts=pd.DataFrame(column_counts).T
+    cm_df=cm_df.loc[rows,cols].divide(cm_df.loc['total',cols]).join(cm_df['total'])
+    return pd.concat([cm_df,column_counts])
+
+
 
