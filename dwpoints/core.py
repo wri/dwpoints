@@ -163,7 +163,7 @@ def accuracy(
     timer=utils.Timer()
     utils.log(f'[{timer.start()}] ...')
     df=utils.get_acc_df(df,label,squash)
-    df.reset_index(names=['label']).to_csv(dest,index=True)
+    df.reset_index(names=['label']).to_csv(dest,index=False)
     utils.log(f'[{timer.stop()}] complete ({timer.delta()})')
 
 
