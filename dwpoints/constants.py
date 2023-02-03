@@ -18,6 +18,7 @@ YEAR=2022
 DEST_PREFIX='dwpoints'
 ACCURACY_DEST_PREFIX='acc'
 CONFUSION_DEST_PREFIX='cm'
+NORMALIZE_CM=False
 #
 # PATHS
 #
@@ -36,7 +37,10 @@ CONFIG_DICT={
     "min_crop": MIN_CROP,
     "min_cropish": MIN_CROPISH,
     "noisy": NOISY,
-    "prefix": DEST_PREFIX
+    "prefix": DEST_PREFIX,
+    "normalize": NORMALIZE_CM,
+    "acc_prefix": ACCURACY_DEST_PREFIX,
+    "cm_prefix": CONFUSION_DEST_PREFIX
 }
 
 
@@ -44,7 +48,7 @@ CONFIG_DICT={
 # NOT CONFIGURABLE
 #
 LABEL_VALUES=range(9)
-DUMMY_PREFIX=False
+DUMMY_PREFIX='DW'
 CRS='epsg:4326'
 SCALE=10
 MAX_PIX=9*4

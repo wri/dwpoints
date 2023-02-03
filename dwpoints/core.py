@@ -21,6 +21,7 @@ ACCURACY_DEST_PREFIX=config.get('acc_prefix')
 CONFUSION_DEST_PREFIX=config.get('cm_prefix')
 SQUASH_KEYS=config.get('squash_keys')
 NOISY=config.get('noisy')
+NORMALIZE_CM=config.get('normalize')
 
 
 
@@ -162,7 +163,7 @@ def accuracy(
     timer=utils.Timer()
     utils.log(f'[{timer.start()}] ...')
     df=utils.get_acc_df(df,label,squash)
-    df.to_csv(dest,index=False)
+    df.reset_index(names=['label']).to_csv(dest,index=True)
     utils.log(f'[{timer.stop()}] complete ({timer.delta()})')
 
 
@@ -173,7 +174,8 @@ def confusion(
         label,
         prefix=CONFUSION_DEST_PREFIX,
         noisy=NOISY,
-        squash=SQUASH_KEYS):
+        squash=SQUASH_KEYS,
+        normalize=NORMALIZE_CM):
     """ generate confusion-matrix results in csvs
 
     Args:
@@ -207,8 +209,14 @@ def confusion(
             c.LABEL_VALUES,
             label,
             pcol)
-        dest=_prefix_path(f'{prefix}.{pcol}',src)
-        cmdf.to_csv(dest,index=False)
+        if normalize:
+            cmdf=utils.normalize_cm(cmdf,c.LABEL_VALUES)
+            dest=_prefix_path(f'{prefix}-norm.{pcol}',src)
+            print(dest)
+        else:
+            dest=_prefix_path(f'{prefix}.{pcol}',src)
+        print('-',dest)
+        cmdf.reset_index(names=['label']).to_csv(dest,index=False)
         utils.log(f'[{timer.time()}] {pcol} ({timer.state()})') 
     utils.log(f'[{timer.stop()}] complete ({timer.delta()})')
 

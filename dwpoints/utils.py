@@ -78,7 +78,7 @@ def get_cm_df(df,label_values,label_col,pred_col,dummy_prefix=c.DUMMY_PREFIX):
     return cm
 
 
-def normalize_cm(cm_df,label_values,dummy_prefix=c.DUMMY_PREFIX,by='columns'):
+def normalize_cm(cm_df,label_values,dummy_prefix=c.DUMMY_PREFIX):
     cols=[f'{dummy_prefix}_{v}' for v in label_values]
     rows=[f'{v}' for v in label_values]
     column_counts=cm_df.loc['total']

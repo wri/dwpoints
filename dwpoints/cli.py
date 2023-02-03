@@ -18,6 +18,7 @@ DEST_PREFIX=config.get('prefix')
 ACCURACY_DEST_PREFIX=config.get('acc_prefix')
 CONFUSION_DEST_PREFIX=config.get('cm_prefix')
 NOISY=config.get('noisy')
+NORMALIZE_CM=config.get('normalize')
 
 
 
@@ -91,11 +92,11 @@ def run(ctx,src,dest,year,lon,lat,min_crop,min_cropish,prefix,noisy,squash):
 @click.argument('label')
 @click.option(
     '--prefix',
-    default=c.ACCURACY_DEST_PREFIX,
+    default=ACCURACY_DEST_PREFIX,
     help='output file is `{prefix}.src-filename.csv`')
 @click.option(
     '--noisy',
-    default=c.NOISY,
+    default=NOISY,
     type=bool)
 @click.option(
     '--squash',
@@ -110,51 +111,62 @@ def accuracy(src,label,prefix,noisy,squash):
 @click.argument('label')
 @click.option(
     '--prefix',
-    default=c.CONFUSION_DEST_PREFIX,
+    default=CONFUSION_DEST_PREFIX,
     help='output files are `{prefix}.{squash_col}.src-filename.csv`')
 @click.option(
     '--noisy',
-    default=c.NOISY,
+    default=NOISY,
     type=bool)
 @click.option(
     '--squash',
     default=None,
     help='comma deliminated string of squash_keys (w/o spaces)')
-def confusion(src,label,prefix,noisy,squash):
-    core.confusion(src=src,label=label,prefix=prefix,noisy=noisy,squash=squash)
+@click.option(
+    '--normalize',
+    default=NORMALIZE_CM,
+    type=bool,
+    help='normalize confusion matrix')
+def confusion(src,label,prefix,noisy,squash,normalize):
+    core.confusion(
+        src=src,
+        label=label,
+        prefix=prefix,
+        noisy=noisy,
+        squash=squash,
+        normalize=normalize)
 
 
 @click.command(name='config',help='generate config file')
 @click.option(
     '--year',
-    default=c.YEAR,
+    default=YEAR,
     help='year to generate squashes',
     type=int)
 @click.option(
     '--lon',
-    default=c.LON_COLUMN,
+    default=LON_COLUMN,
     help='name of longitude column')
 @click.option(
     '--lat',
-    default=c.LAT_COLUMN,
+    default=LAT_COLUMN,
     help='name of latitude column')
 @click.option(
     '--min_crop',
-    default=c.MIN_CROP,
+    default=MIN_CROP,
     help='minimum number of crop months for crop-rule',
     type=int)
 @click.option(
     '--min_cropish',
-    default=c.MIN_CROPISH,
+    default=MIN_CROPISH,
     help='minimum number of cropish months for crop-rule',
     type=int)
 @click.option(
     '--prefix',
-    default=c.DEST_PREFIX,
+    default=DEST_PREFIX,
     help='if not dest given, name file `{prefix}.src-filename.csv`')
 @click.option(
     '--noisy',
-    default=c.NOISY,
+    default=NOISY,
     type=bool)
 @click.option(
     '--squash',
