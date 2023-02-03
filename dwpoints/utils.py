@@ -61,11 +61,17 @@ def get_acc_df(df,label_col,pred_cols):
         label_col=label_col,
         pred_cols=pred_cols).tolist())
     counts=eq.groupby(label_col).sum()
-    counts['total']=[df[df.label==l].shape[0] for l in counts.index]
-    accs=counts[pred_cols].divide(counts['total'],axis=0)
+    total=pd.Series([df[df.label==l].shape[0] for l in counts.index])
+    accs=counts[pred_cols].divide(total,axis=0)
+    acc_row=pd.DataFrame([counts.sum(axis=0).divide(total.sum())])
+    acc_row.index=['ALL']
     accs.rename(columns={ c:f'{c}_acc' for c in pred_cols},inplace=True)
+    acc_row.rename(columns={ c:f'{c}_acc' for c in pred_cols},inplace=True)
     counts.rename(columns={ c:f'{c}_count' for c in pred_cols},inplace=True)
-    return accs.join(counts)
+    stats=accs.join(counts)
+    stats['total']=total
+    stats=pd.concat([stats,acc_row]).fillna('--')
+    return stats  
 
 
 def get_cm_df(df,label_values,label_col,pred_col,dummy_prefix=c.DUMMY_PREFIX):
@@ -82,7 +88,7 @@ def normalize_cm(cm_df,label_values,dummy_prefix=c.DUMMY_PREFIX):
     cols=[f'{dummy_prefix}_{v}' for v in label_values]
     rows=[f'{v}' for v in label_values]
     column_counts=cm_df.loc['total']
-    column_counts=pd.DataFrame(column_counts).T
+    column_counts=pd.DataFrame([column_counts])
     cm_df=cm_df.loc[rows,cols].divide(cm_df.loc['total',cols]).join(cm_df['total'])
     return pd.concat([cm_df,column_counts])
 
