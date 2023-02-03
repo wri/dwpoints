@@ -1,4 +1,4 @@
-#### DW POINTS
+### DW POINTS
 
 _CLI for generating dynamic world points values for a number of different squash techniques_
 
@@ -11,7 +11,7 @@ _CLI for generating dynamic world points values for a number of different squash
 ---
 
 <a href="#install"></a>
-##### INSTALL
+#### INSTALL
 
 ```bash
 git clone https://github.com/wri/dwpoints.git
@@ -23,14 +23,14 @@ pip install -e .
 
 
 <a href="#usage"></a>
-##### USAGE
+#### USAGE
 
-This repo is mainly intended to be used as a CLI, although the python modules would be useful in there own right.
+This repo is mainly intended to be used as a CLI, although the python modules may be used directly.
 
 <a href="#cli"></a>
-###### CLI
+##### CLI
 
-As discussed below, specific behavior can be controled through CLI flags, or better, through a config file. In its simplest form you need an csv that has a "lon" and "lat" column:
+As discussed below, specific behavior can be controled through CLI flags, or better yet, through a config file. In its simplest form you need an csv that has a "lon" and "lat" column:
 
 _sample_points.csv_
 ```text
@@ -56,7 +56,7 @@ dw_median_cr,dw_median_label,dw_mode,dw_monthly_median_label_mode,lat,lon
 8,8,8,8,35.3977095288518,-86.08272398402876
 ```
 
-If your sample points file contains a "label" column with the expected value you can produce an accuracy assement and confusion matrices by running 
+If your sample points file contains a "label" column with the expected values you can produce an accuracy assement and confusion matrices by running 
 
 ```bash
 $ dwpoints accuracy sample_points.csv label
@@ -67,7 +67,7 @@ See the [walkthrough](#example) below for a detailed example of accuracy/confusi
 
 
 <a href="#example"></a>
-###### EXAMPLE WALK THROUGH
+##### EXAMPLE WALK THROUGH
 
 This example uses some sample points in generated stored in GCS (https://storage.googleapis.com/dynamic-world-public/dw-exports/point_data/dev_dw_sample_pts-500.csv). The "label" column was generated using the annual monthly mode, which is reflected in the perfect scores shown below for `dw_mode`.
 
@@ -190,7 +190,7 @@ cm-norm.dw_median_cr.dwpoints.dev_dw_sample_pts-500.csv
 
 
 <a href="#python"></a>
-###### PYTHON
+##### PYTHON
 
 If need be you can access the same functionality through the python modules.
 ```python
@@ -201,7 +201,7 @@ import dwpoints.labels as labels
 ```
 
 <a href="#python"></a>
-##### CONFIG
+#### CONFIG
 
 Create custom default dwpoints config-values. Values can be updated directly through CLI, or you can edit the generated config file `dwpoints.config.yaml` directly. I suggest generating the file with the default values and editing the resulting YAML file:
 
@@ -230,7 +230,7 @@ Note all these choices can be overridden using args and flags for the CLI (See [
 
 
 <a href="#docs"></a>
-##### DOCS
+#### DOCS
 
 ```bash
 $ dwpoints --help
