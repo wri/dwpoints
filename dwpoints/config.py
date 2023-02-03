@@ -30,6 +30,7 @@ def generate(
         lat=c.LAT_COLUMN,
         min_crop=c.MIN_CROP,
         min_cropish=c.MIN_CROPISH,
+        prefix=c.DEST_PREFIX,
         noisy=c.NOISY,
         squash=None,
         force=False):
@@ -46,6 +47,7 @@ def generate(
         'squash_keys': squash,
         'min_crop': min_crop,
         'min_cropish': min_cropish,
+        'prefix': prefix,
         'noisy': noisy
     }
     if not force and os.path.exists(c.DWPOINTS_CONFIG_PATH):

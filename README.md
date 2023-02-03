@@ -1,9 +1,16 @@
-##### DW POINTS
+#### DW POINTS
 
 _CLI for generating dynamic world points values for a number of different squash techniques_
 
+- [Install](#install)
+- [CLI](#cli)
+- [Example Walkthrough](#walkthrough)
+- [Config](#config)
+- [Docs](#docs)
+
 ---
 
+<a href="#install"></a>
 ##### INSTALL
 
 ```bash
@@ -14,10 +21,13 @@ pip install -e .
 
 ---
 
+
+<a href="#usage"></a>
 ##### USAGE
 
 This repo is mainly intended to be used as a CLI, although the python modules would be useful in there own right.
 
+<a href="#cli"></a>
 ###### CLI
 
 As discussed below, specific behavior can be controled through CLI flags, or better, through a config file. In its simplest form you need an csv that has a "lon" and "lat" column:
@@ -34,22 +44,6 @@ Then you can generate the various dynamic-world labels:
 
 ```bash
 $ dwpoints run sample_points.csv
-
-[INFO] DW_POINTS: generating dynamic world point values
----------------------------------------------------------------------------------------
-{'dest': 'dwpoints.sample_points.csv',
- 'min_crop': 2,
- 'min_cropish': 11,
- 'nb_points': 3,
- 'squash_columns': ['dw_mode',
-                    'dw_median_label',
-                    'dw_monthly_median_label_mode',
-                    'dw_median_cr'],
- 'src': 'sample_points.csv',
- 'year': 2022}
-[INFO] DW_POINTS: [[2023.02.02] 18:56:22] ...inspecting rows
-[INFO] DW_POINTS: [[2023.02.02] 18:56:22] ...earthengine request (0:00:00.002666)
-[INFO] DW_POINTS: [[2023.02.02] 18:56:23] complete (0:00:01.047772)
 ```
 
 Which produces the csv "dwpoints.sample_points.csv":
@@ -62,18 +56,22 @@ dw_median_cr,dw_median_label,dw_mode,dw_monthly_median_label_mode,lat,lon
 8,8,8,8,35.3977095288518,-86.08272398402876
 ```
 
-If your sample points file contains a "label" column with the expected value you can produce an accuracy assement and confusion matrices.
+If your sample points file contains a "label" column with the expected value you can produce an accuracy assement and confusion matrices by running 
 
-_sample_points.csv_ might look like this
-
-```text
-label,lon,lat
-5,-82.02395586731994,36.11411596793721
-6,-81.64208204004073,35.41441819313651
-8,-86.08272398402876,35.3977095288518
+```bash
+$ dwpoints accuracy sample_points.csv label
+$ dwpoints confusion sample_points.csv label
 ```
 
-however in this example we'll use a csv saved to google cloud
+See the [walkthrough](#walkthrough) below for a detailed example of accuracy/confusion.
+
+
+<a href="#walkthrough"></a>
+###### EXAMPLE WALK THROUGH
+
+This example uses some sample points in generated stored in GCS (https://storage.googleapis.com/dynamic-world-public/dw-exports/point_data/dev_dw_sample_pts-500.csv). The "label" column was generated using the annual monthly mode, which is reflected in the perfect scores shown below for `dw_mode`.
+
+First we'll generate the dw-values:
 
 ```bash
 $ dwpoints run https://storage.googleapis.com/dynamic-world-public/dw-exports/point_data/dev_dw_sample_pts-500.csv
@@ -94,6 +92,12 @@ $ dwpoints run https://storage.googleapis.com/dynamic-world-public/dw-exports/po
 [INFO] DW_POINTS: [[2023.02.02] 19:08:45] ...earthengine request (0:00:01.467955)
 [INFO] DW_POINTS: [[2023.02.02] 19:10:53] complete (0:02:09.540832)
 ```
+
+This generated `dwpoints.dev_dw_sample_pts-500.csv`
+
+![dwpoints.dev_dw_sample_pts-500.csv](https://github.com/wri/dwpoints/blob/main/images/dw_values.png?raw=true)
+
+
 
 Now we can evaluate the accuracy and look at confusion matrices:
 
@@ -121,8 +125,6 @@ This generated `acc.dwpoints.dev_dw_sample_pts-500.csv`.  Reading it into a data
 More useful perhaps is generating confusion matrices:
 
 
-
-
 ```bash
 $ dwpoints confusion dwpoints.dev_dw_sample_pts-500.csv label
 
@@ -147,7 +149,7 @@ $ dwpoints confusion dwpoints.dev_dw_sample_pts-500.csv label
 [INFO] DW_POINTS: [[2023.02.02] 20:19:12] complete (0:00:00.019358)
 ```
 
-This generated 4 different confusion matrix files [cm.dw_mode.dwpoints.dev_dw_sample_pts-500.csv, cm.dw_median_label.dwpoints.dev_dw_sample_pts-500.csv, cm.dw_monthly_median_label_mode.dwpoints.dev_dw_sample_pts-500.csv, cm.dw_median_cr.dwpoints.dev_dw_sample_pts-500.csv]
+This generated confusion matrix file for each of our different "squash" schemes [cm.dw_mode.dwpoints.dev_dw_sample_pts-500.csv, cm.dw_median_label.dwpoints.dev_dw_sample_pts-500.csv, cm.dw_monthly_median_label_mode.dwpoints.dev_dw_sample_pts-500.csv, cm.dw_median_cr.dwpoints.dev_dw_sample_pts-500.csv]. 
 
 Let's have a look:
 
@@ -187,18 +189,47 @@ cm-norm.dw_median_cr.dwpoints.dev_dw_sample_pts-500.csv
 ![confusion-matrix output](https://github.com/wri/dwpoints/blob/main/images/cm_norm.png?raw=true)
 
 
+<a href="#python"></a>
 ###### PYTHON
 
+If need be you can access the same functionality through the python modules.
 ```python
+import dwpoints.core as core
+import dwpoints.labels as labels
+
 ...
 ```
 
+<a href="#python"></a>
 ##### CONFIG
 
-Create custom default dwpoints config-values. Values can be updated directly through CLI, or you can edit the generated config file `dwpoints.config.yaml` directly.
+Create custom default dwpoints config-values. Values can be updated directly through CLI, or you can edit the generated config file `dwpoints.config.yaml` directly. I suggest generating the file with the default values and editing the resulting YAML file:
 
-...
+```bash
+$ dwpoints config             
+[INFO] DW_POINTS: dwpoints-config.yaml created. edit file to change configuration
+$ cat dwpoints-config.yaml
+# dwpoints: config
+lat: lat
+lon: lon
+min_crop: 2
+min_cropish: 11
+noisy: true
+prefix: dwpoints
+squash_keys:
+- dw_mode
+- dw_median_label
+- dw_monthly_median_label_mode
+- dw_median_cr
+year: 2022
+```
 
+Now you can edit this file to change the "squash_keys" or the "year", or change the "lon/lat" naming convention to "longitude/latitude" etc.
+
+Note all these choices can be overridden using args and flags for the CLI (See [docs](#docs) below for more detail). That said having fixed config files will be the easiest approach.
+
+
+<a href="#docs"></a>
 ##### DOCS
 
 ```bash
@@ -214,9 +245,7 @@ Commands:
   config     generate config file
   confusion  generate confusion matrices for specific squashes
   run        generate dwpoints file
-
 ```
-
 
 ```bash
 $ dwpoints run --help
@@ -235,12 +264,10 @@ Options:
   --noisy BOOLEAN
   --squash TEXT          comma deliminated string of squash_keys (w/o spaces)
   --help                 Show this message and exit.
-
-
 ```
 
 ```bash
-dwpoints config --help
+$ dwpoints config --help
 Usage: dwpoints config [OPTIONS]
 
   generate config file
@@ -257,6 +284,34 @@ Options:
   --squash TEXT          comma deliminated string of squash_keys (w/o spaces)
   --force BOOLEAN        if true overwrite existing config
   --help                 Show this message and exit.
+```
+
+```bash
+$ dwpoints accuracy --help
+Usage: dwpoints accuracy [OPTIONS] SRC LABEL
+
+  generate accuracy results
+
+Options:
+  --prefix TEXT    output file is `{prefix}.src-filename.csv`
+  --noisy BOOLEAN
+  --squash TEXT    comma deliminated string of squash_keys (w/o spaces)
+  --help           Show this message and exit.
+```
+
+```bash
+$ dwpoints confusion --help
+Usage: dwpoints confusion [OPTIONS] SRC LABEL
+
+  generate confusion matrices for specific squashes
+
+Options:
+  --prefix TEXT        output files are `{prefix}.{squash_col}.src-
+                       filename.csv`
+  --noisy BOOLEAN
+  --squash TEXT        comma deliminated string of squash_keys (w/o spaces)
+  --normalize BOOLEAN  normalize confusion matrix
+  --help               Show this message and exit.              Show this message and exit.
   ```
 
 

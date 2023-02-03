@@ -22,7 +22,7 @@ NORMALIZE_CM=False
 #
 # PATHS
 #
-DWPOINTS_CONFIG_PATH='dwpoints-config.json'
+DWPOINTS_CONFIG_PATH='dwpoints-config.yaml'
 BAK_CONFIG_PATH='{}.bak'.format(DWPOINTS_CONFIG_PATH)
 
 
@@ -70,6 +70,6 @@ CLASSES=[
 # COMMENT STRINGS
 #
 DWPOINTS_CONFIG_COMMENT="dwpoints: config"
-DWPOINTS_CONFIG_EXISTS="dwpoints.config.yaml exists.  use force=True to overwrite."
-DWPOINTS_CONFIG_CREATED="dwpoints.config.yaml created. edit file to change configuration"
+DWPOINTS_CONFIG_EXISTS="dwpoints-config.yaml exists.  use force=True to overwrite."
+DWPOINTS_CONFIG_CREATED="dwpoints-config.yaml created. edit file to change configuration"
 
