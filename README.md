@@ -116,7 +116,7 @@ $ dwpoints accuracy dwpoints.dev_dw_sample_pts-500.csv label
 [INFO] DW_POINTS: [[2023.02.02] 19:56:46] complete (0:00:00.084650)
 ```
 
-This generated `acc.dwpoints.dev_dw_sample_pts-500.csv`.  Reading it into a dataframe you'll see there is a row for each possible label value. The rows give the per-label accuracy of each squash, as well as the total correct for each squash and the total number pixels.  For clarity, note that the "\_acc" columns equal the "\_count" columns divided by the "total" column.
+This generated `acc.dwpoints.dev_dw_sample_pts-500.csv`.  Reading it into a dataframe you'll see there is a row for each possible label value. The rows give the per-label accuracy of each squash, as well as the total correct for each squash and the total number pixels.  For clarity, note that the "\_acc" columns equal the "\_count" columns divided by the "total" column. The final row, "ALL", gives the overall accuracy.
 
 ![accuracy output](https://github.com/wri/dwpoints/blob/main/images/acc.png?raw=true)
 
