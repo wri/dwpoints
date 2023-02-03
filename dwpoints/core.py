@@ -131,6 +131,7 @@ def run(
 
 def accuracy(        
         src,
+        label,
         prefix=ACCURACY_DEST_PREFIX,
         noisy=NOISY,
         squash=SQUASH_KEYS):
@@ -138,6 +139,7 @@ def accuracy(
 
     Args:
         - src<str>: path or url to source csv
+        - label<str>: column name for label
         - dest<str|None>: destination (if None uses `{prefix}.{src}`)
         - prefix<str>: destination prefix (only used if dest not provided)
         - noisy<bool>: print log statements
@@ -146,13 +148,29 @@ def accuracy(
     Action: 
         accuracy results are saved to a csv
     """
-    utils.log('TODO: Accuracy')
-    pass
+    if squash:
+        squash=squash.split(',')
+    else:
+        squash=config.get('squash_keys')
+    dest=_prefix_path(prefix,src)
+    df=pd.read_csv(src)
+    utils.log('generating aggrement assement',
+        src=src,
+        dest=dest,
+        nb_points=df.shape[0],
+        squash_columns=squash)
+    timer=utils.Timer()
+    utils.log(f'[{timer.start()}] ...')
+    df=utils.get_acc_df(df,label,squash)
+    df.to_csv(dest,index=False)
+    utils.log(f'[{timer.stop()}] complete ({timer.delta()})')
+
 
 
 
 def confusion(        
         src,
+        label,
         prefix=CONFUSION_DEST_PREFIX,
         noisy=NOISY,
         squash=SQUASH_KEYS):
@@ -160,6 +178,7 @@ def confusion(
 
     Args:
         - src<str>: path or url to source csv
+        - label<str>: column name for label
         - dest<str|None>: destination (if None uses `{prefix}.{src}`)
         - prefix<str>: destination prefix (only used if dest not provided)
         - noisy<bool>: print log statements
@@ -169,8 +188,29 @@ def confusion(
         confusion matrices are saved to individual csv's for each
         column in squash
     """
-    utils.log('TODO: Confusion')
-    pass
+    if squash:
+        squash=squash.split(',')
+    else:
+        squash=config.get('squash_keys')
+    df=pd.read_csv(src)
+    dest=_prefix_path(f'{prefix}.<squash>',src)
+    utils.log('generating confusion matrices',
+        src=src,
+        dest=dest,
+        nb_points=df.shape[0],
+        squash_columns=squash)
+    timer=utils.Timer()
+    utils.log(f'[{timer.start()}] ...')
+    for pcol in squash:
+        cmdf=utils.get_cm_df(
+            df,
+            c.LABEL_VALUES,
+            label,
+            pcol)
+        dest=_prefix_path(f'{prefix}.{pcol}',src)
+        cmdf.to_csv(dest,index=False)
+        utils.log(f'[{timer.time()}] {pcol} ({timer.state()})') 
+    utils.log(f'[{timer.stop()}] complete ({timer.delta()})')
 
 
 

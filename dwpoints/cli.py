@@ -88,6 +88,7 @@ def run(ctx,src,dest,year,lon,lat,min_crop,min_cropish,prefix,noisy,squash):
 
 @click.command(name='accuracy',help='generate accuracy results')
 @click.argument('src')
+@click.argument('label')
 @click.option(
     '--prefix',
     default=c.ACCURACY_DEST_PREFIX,
@@ -100,12 +101,13 @@ def run(ctx,src,dest,year,lon,lat,min_crop,min_cropish,prefix,noisy,squash):
     '--squash',
     default=None,
     help='comma deliminated string of squash_keys (w/o spaces)')
-def accuracy(src,prefix,noisy,squash):
-    core.accuracy(src=src,prefix=prefix,noisy=noisy,squash=squash)
+def accuracy(src,label,prefix,noisy,squash):
+    core.accuracy(src=src,label=label,prefix=prefix,noisy=noisy,squash=squash)
 
 
 @click.command(name='confusion',help='generate confusion matrices for specific squashes')
 @click.argument('src')
+@click.argument('label')
 @click.option(
     '--prefix',
     default=c.CONFUSION_DEST_PREFIX,
@@ -118,8 +120,8 @@ def accuracy(src,prefix,noisy,squash):
     '--squash',
     default=None,
     help='comma deliminated string of squash_keys (w/o spaces)')
-def confusion(src,prefix,noisy,squash):
-    core.confusion(src=src,prefix=prefix,noisy=noisy,squash=squash)
+def confusion(src,label,prefix,noisy,squash):
+    core.confusion(src=src,label=label,prefix=prefix,noisy=noisy,squash=squash)
 
 
 @click.command(name='config',help='generate config file')
