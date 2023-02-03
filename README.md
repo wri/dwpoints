@@ -113,46 +113,79 @@ $dwpoints accuracy dwpoints.dev_dw_sample_pts-500.csv label
 [INFO] DW_POINTS: [[2023.02.02] 19:56:46] complete (0:00:00.084650)
 ```
 
-This generated `acc.dwpoints.dev_dw_sample_pts-500.csv`.  
+This generated `acc.dwpoints.dev_dw_sample_pts-500.csv`.  Reading it into a dataframe you'll see there is a row for each possible label value. The rows give the per-label accuracy of each squash, as well as the total correct for each squash and the total number pixels.  For clarity, note that the "\_acc" columns equal the "\_count" columns divided by the "total" column.
 
-```python
-pd.read_csv('acc.dwpoints.dev_dw_sample_pts-500.csv').set_index('label')
+![accuracy output](https://github.com/wri/dwpoints/blob/main/images/acc.png?raw=true)
 
 
-""" (truncated output for illustrative purposes)
-
-        dw_median_label_acc  dw_median_cr_acc  dw_median_label_count  dw_median_cr_count  total
-label                                   
-0.0             0.984              0.984                492                    492         500
-1.0             0.986              0.986                493                    493         500
-2.0             0.952              0.952                476                    476         500
-3.0             0.824              0.824                412                    412         500
-4.0             0.946              0.946                473                    473         500
-5.0             0.912              0.912                456                    456         500
-6.0             0.988              0.988                494                    494         500
-7.0             0.776              0.776                388                    388         500
-8.0             0.732              0.732                366                    366         500
-"""
-```
-
+More useful perhaps is generating confusion matrices:
 
 
 
 
 ```bash
-    DW_0    DW_1    DW_2    DW_3    DW_4    DW_5    DW_6    DW_7    DW_8    total
-label                                       
-0   0.970   0.010   0.002   0.0 0.000   0.002   0.000   0.000   0.000   500
-1   0.000   0.798   0.004   0.0 0.002   0.005   0.002   0.000   0.000   500
-2   0.000   0.006   0.917   0.0 0.024   0.011   0.002   0.000   0.000   500
-3   0.026   0.037   0.013   1.0 0.004   0.059   0.000   0.010   0.000   500
-4   0.000   0.006   0.031   0.0 0.957   0.011   0.000   0.000   0.000   500
-5   0.000   0.045   0.021   0.0 0.004   0.694   0.002   0.005   0.000   500
-6   0.000   0.008   0.002   0.0 0.000   0.000   0.961   0.000   0.000   500
-7   0.000   0.002   0.004   0.0 0.008   0.157   0.002   0.942   0.003   500
-8   0.004   0.087   0.006   0.0 0.000   0.062   0.031   0.044   0.997   500
-total   507.000 618.000 519.000 412.0   494.000 657.000 514.000 412.000 367.000 4500
+$ dwpoints confusion dwpoints.dev_dw_sample_pts-500.csv label
+
+[INFO] DW_POINTS: generating confusion matrices
+----------------------------------------------------------------------------------------------------
+{'dest': 'cm.<squash>.dwpoints.dev_dw_sample_pts-500.csv',
+ 'nb_points': 4500,
+ 'squash_columns': ['dw_mode',
+                    'dw_median_label',
+                    'dw_monthly_median_label_mode',
+                    'dw_median_cr'],
+ 'src': 'dwpoints.dev_dw_sample_pts-500.csv'}
+[INFO] DW_POINTS: [[2023.02.02] 20:19:12] ...
+- cm.dw_mode.dwpoints.dev_dw_sample_pts-500.csv
+[INFO] DW_POINTS: [[2023.02.02] 20:19:12] dw_mode (0:00:00.009224)
+- cm.dw_median_label.dwpoints.dev_dw_sample_pts-500.csv
+[INFO] DW_POINTS: [[2023.02.02] 20:19:12] dw_median_label (0:00:00.013004)
+- cm.dw_monthly_median_label_mode.dwpoints.dev_dw_sample_pts-500.csv
+[INFO] DW_POINTS: [[2023.02.02] 20:19:12] dw_monthly_median_label_mode (0:00:00.016119)
+- cm.dw_median_cr.dwpoints.dev_dw_sample_pts-500.csv
+[INFO] DW_POINTS: [[2023.02.02] 20:19:12] dw_median_cr (0:00:00.019349)
+[INFO] DW_POINTS: [[2023.02.02] 20:19:12] complete (0:00:00.019358)
 ```
+
+This generated 4 different confusion matrix files [cm.dw_mode.dwpoints.dev_dw_sample_pts-500.csv, cm.dw_median_label.dwpoints.dev_dw_sample_pts-500.csv, cm.dw_monthly_median_label_mode.dwpoints.dev_dw_sample_pts-500.csv, cm.dw_median_cr.dwpoints.dev_dw_sample_pts-500.csv]
+
+Let's have a look:
+
+![confusion-matrix output](https://github.com/wri/dwpoints/blob/main/images/cm_sum.png?raw=true)
+
+
+By passing the `--normalize True` flag you get the same result normalized by column totals (so the diagonal is the recall):
+
+```bash
+$ dwpoints confusion dwpoints.dev_dw_sample_pts-500.csv label --normalize True
+
+[INFO] DW_POINTS: generating confusion matrices
+----------------------------------------------------------------------------------------------------
+{'dest': 'cm.<squash>.dwpoints.dev_dw_sample_pts-500.csv',
+ 'nb_points': 4500,
+ 'squash_columns': ['dw_mode',
+                    'dw_median_label',
+                    'dw_monthly_median_label_mode',
+                    'dw_median_cr'],
+ 'src': 'dwpoints.dev_dw_sample_pts-500.csv'}
+[INFO] DW_POINTS: [[2023.02.02] 20:23:22] ...
+cm-norm.dw_mode.dwpoints.dev_dw_sample_pts-500.csv
+- cm-norm.dw_mode.dwpoints.dev_dw_sample_pts-500.csv
+[INFO] DW_POINTS: [[2023.02.02] 20:23:22] dw_mode (0:00:00.011574)
+cm-norm.dw_median_label.dwpoints.dev_dw_sample_pts-500.csv
+- cm-norm.dw_median_label.dwpoints.dev_dw_sample_pts-500.csv
+[INFO] DW_POINTS: [[2023.02.02] 20:23:22] dw_median_label (0:00:00.017708)
+cm-norm.dw_monthly_median_label_mode.dwpoints.dev_dw_sample_pts-500.csv
+- cm-norm.dw_monthly_median_label_mode.dwpoints.dev_dw_sample_pts-500.csv
+[INFO] DW_POINTS: [[2023.02.02] 20:23:22] dw_monthly_median_label_mode (0:00:00.022811)
+cm-norm.dw_median_cr.dwpoints.dev_dw_sample_pts-500.csv
+- cm-norm.dw_median_cr.dwpoints.dev_dw_sample_pts-500.csv
+[INFO] DW_POINTS: [[2023.02.02] 20:23:22] dw_median_cr (0:00:00.027556)
+[INFO] DW_POINTS: [[2023.02.02] 20:23:22] complete (0:00:00.027568)
+```
+
+![confusion-matrix output](https://github.com/wri/dwpoints/blob/main/images/cm_norm.png?raw=true)
+
 
 ###### PYTHON
 
