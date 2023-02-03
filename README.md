@@ -149,14 +149,15 @@ $ dwpoints confusion dwpoints.dev_dw_sample_pts-500.csv label
 [INFO] DW_POINTS: [[2023.02.02] 20:19:12] complete (0:00:00.019358)
 ```
 
-This generated confusion matrix file for each of our different "squash" schemes [cm.dw_mode.dwpoints.dev_dw_sample_pts-500.csv, cm.dw_median_label.dwpoints.dev_dw_sample_pts-500.csv, cm.dw_monthly_median_label_mode.dwpoints.dev_dw_sample_pts-500.csv, cm.dw_median_cr.dwpoints.dev_dw_sample_pts-500.csv]. 
+This generated confusion matrix file for each of our different "squash" schemes listed in the `squash_columns` of the CLI output above. 
 
-Let's have a look:
+Let's have a look at the `dw_median_cr` file:
 
 ![confusion-matrix output](https://github.com/wri/dwpoints/blob/main/images/cm_sum.png?raw=true)
 
 
-By passing the `--normalize True` flag you get the same result normalized by column totals (so the diagonal is the recall):
+We can improve on this further by passing the `--normalize True` flag. You get the same result but normalized by column totals (so the diagonal values are equal to the recall):
+
 
 ```bash
 $ dwpoints confusion dwpoints.dev_dw_sample_pts-500.csv label --normalize True
