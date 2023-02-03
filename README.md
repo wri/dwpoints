@@ -4,7 +4,7 @@ _CLI for generating dynamic world points values for a number of different squash
 
 - [Install](#install)
 - [CLI](#cli)
-- [Example Walkthrough](#walkthrough)
+- [Example Walkthrough](#example)
 - [Config](#config)
 - [Docs](#docs)
 
@@ -63,10 +63,10 @@ $ dwpoints accuracy sample_points.csv label
 $ dwpoints confusion sample_points.csv label
 ```
 
-See the [walkthrough](#walkthrough) below for a detailed example of accuracy/confusion.
+See the [walkthrough](#example) below for a detailed example of accuracy/confusion.
 
 
-<a href="#walkthrough"></a>
+<a href="#example"></a>
 ###### EXAMPLE WALK THROUGH
 
 This example uses some sample points in generated stored in GCS (https://storage.googleapis.com/dynamic-world-public/dw-exports/point_data/dev_dw_sample_pts-500.csv). The "label" column was generated using the annual monthly mode, which is reflected in the perfect scores shown below for `dw_mode`.
@@ -311,7 +311,7 @@ Options:
   --noisy BOOLEAN
   --squash TEXT        comma deliminated string of squash_keys (w/o spaces)
   --normalize BOOLEAN  normalize confusion matrix
-  --help               Show this message and exit.              Show this message and exit.
+  --help               Show this message and exit.
   ```
 
 
