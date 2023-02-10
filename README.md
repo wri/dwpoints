@@ -18,6 +18,8 @@ cd dwpoints
 pip install -e .
 ```
 
+For convience, the conda environment used during development is [conda_env/geoml38](conda_env/geoml38.yaml). Note however this isn't a requirements file.  It can be used to set up an enviroment in which this code runs, however there are several unnecesary modules.
+
 ---
 
 

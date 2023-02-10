@@ -1,0 +1,31 @@
+#
+# conda env create -f geoml38.yaml
+# conda env update -f geoml38.yaml --prune
+#
+name: geoml38
+channels:
+  - conda-forge
+  - apple
+
+dependencies:
+  - python=3.8
+  - pip
+  - ipykernel
+  - numpy
+  - pandas
+  - geopandas
+  - jupyterlab
+  - geojson
+  - affine
+  - rasterio
+  - scikit-learn
+  - earthengine-api
+  - matplotlib
+  - seaborn
+  - tensorflow-deps
+  - unidecode
+  - geemap
+  - pip:
+    - radiant_mlhub
+    - tensorflow-macos
+    - tensorflow-metal
