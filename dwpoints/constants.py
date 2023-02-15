@@ -9,7 +9,7 @@ SQUASH_KEYS=[
     'dw_mode',
     'dw_median_label',
     'dw_monthly_median_label_mode',
-    'dw_median_cr'
+    'dw_median_cr',
     'dw_median_sr',
     'dw_median_sr_cr',
     'dw_median_sr_cr_br'

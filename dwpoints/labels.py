@@ -107,7 +107,6 @@ def annual_dw(year,min_crop=c.MIN_CROP,min_cropish=c.MIN_CROPISH,min_snow=c.MIN_
     dw=DW.filterDate(start_date,start_date.advance(1,'year'))
     dw_mean=dw.select(c.CLASSES).mean()
     dw_median=dw.select(c.CLASSES).median()
-
     dw_mode=dw.select('label').mode()
     dw_mean_label=probabilites_to_class(dw_mean)
     dw_median_label=probabilites_to_class(dw_median)
