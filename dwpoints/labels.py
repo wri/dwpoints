@@ -98,6 +98,20 @@ def bu_rule(monthly_ic,label,nb_builtup):
 #
 # PUBLIC
 #
+def aggregate_dw(year=None,month=None,day=c.DAY,duration=c.DURATION,duration_type=c.DURATION_TYPE,start_date=None):
+    if start_date:
+        start_date=ee.Date(start_date)
+    else:
+        start_date=ee.Date.fromYMD(year,month,day)
+    end_data=start_date.advance(duration,duration_type)
+    dw=DW.filterDate(start_date,end_date).select(c.CLASSES)
+    dw_mean_label=probabilites_to_class(dw.mean())
+    dw_median_label=probabilites_to_class(dw.median())
+    return {
+        'dw_mean_label': dw_mean_label,
+        'dw_median_label': dw_median_label }
+
+
 def annual_dw(year,min_crop=c.MIN_CROP,min_cropish=c.MIN_CROPISH,min_snow=c.MIN_SNOW,nb_builtup=c.NB_BUILTUP):
     start_date=ee.Date.fromYMD(year,1,1)
     # MONTHLY ICS

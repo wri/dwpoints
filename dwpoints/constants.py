@@ -21,6 +21,9 @@ DEST_PREFIX='dwpoints'
 ACCURACY_DEST_PREFIX='acc'
 CONFUSION_DEST_PREFIX='cm'
 NORMALIZE_CM=False
+DAY=1
+DURATION=1
+DURATION_TYPE='month'
 #
 # PATHS
 #
@@ -44,7 +47,10 @@ CONFIG_DICT={
     "prefix": DEST_PREFIX,
     "normalize": NORMALIZE_CM,
     "acc_prefix": ACCURACY_DEST_PREFIX,
-    "cm_prefix": CONFUSION_DEST_PREFIX
+    "cm_prefix": CONFUSION_DEST_PREFIX,
+    "day": DAY,
+    "duration": DURATION,
+    "duration_type": DURATION_TYPE
 }
 
 

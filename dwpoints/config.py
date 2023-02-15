@@ -33,6 +33,9 @@ def generate(
         min_snow=c.MIN_SNOW,
         nb_builtup=c.NB_BUILTUP,
         prefix=c.DEST_PREFIX,
+        day=c.DAY,
+        duration=c.DURATION,
+        duration_type=c.DURATION_TYPE,
         noisy=c.NOISY,
         squash=None,
         force=False):
@@ -50,6 +53,9 @@ def generate(
         'min_crop': min_crop,
         'min_cropish': min_cropish,
         'prefix': prefix,
+        'day': day,
+        'duration': duration,
+        'duration_type': duration_type,
         'noisy': noisy
     }
     if not force and os.path.exists(c.DWPOINTS_CONFIG_PATH):
