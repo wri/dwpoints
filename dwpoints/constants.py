@@ -11,6 +11,10 @@ SQUASH_KEYS=[
     'dw_median_cr',
     'dw_median_sr_cr_br'
 ]
+AGGREGATE_SQUASH_KEYS=[
+    'dw_mean_label',
+    'dw_median_label'
+]
 NOISY=True
 MIN_CROP=2
 MIN_CROPISH=11
@@ -21,6 +25,7 @@ DEST_PREFIX='dwpoints'
 ACCURACY_DEST_PREFIX='acc'
 CONFUSION_DEST_PREFIX='cm'
 NORMALIZE_CM=False
+MONTH=1
 DAY=1
 DURATION=1
 DURATION_TYPE='month'
@@ -29,7 +34,6 @@ DURATION_TYPE='month'
 #
 DWPOINTS_CONFIG_PATH='dwpoints-config.yaml'
 BAK_CONFIG_PATH='{}.bak'.format(DWPOINTS_CONFIG_PATH)
-
 
 #
 # JSON TEMPLATES
@@ -48,9 +52,11 @@ CONFIG_DICT={
     "normalize": NORMALIZE_CM,
     "acc_prefix": ACCURACY_DEST_PREFIX,
     "cm_prefix": CONFUSION_DEST_PREFIX,
+    "month": MONTH,
     "day": DAY,
     "duration": DURATION,
-    "duration_type": DURATION_TYPE
+    "duration_type": DURATION_TYPE,
+    "aggregate_squash_keys": AGGREGATE_SQUASH_KEYS
 }
 
 

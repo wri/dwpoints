@@ -12,6 +12,10 @@ ee.Initialize()
 # CONFIG CONSTANTS
 #
 YEAR=config.get('year')
+MONTH=config.get('month')
+DAY=config.get('day')
+DURATION=config.get('duration')
+DURATION_TYPE=config.get('duration_type')
 LON_COLUMN=config.get('lon')
 LAT_COLUMN=config.get('lat')
 MIN_CROP=config.get('min_crop')
@@ -22,8 +26,7 @@ CONFUSION_DEST_PREFIX=config.get('cm_prefix')
 SQUASH_KEYS=config.get('squash_keys')
 NOISY=config.get('noisy')
 NORMALIZE_CM=config.get('normalize')
-
-
+AGGREGATE_SQUASH_KEYS=config.get('aggregate_squash_keys')
 
 #
 # INTERNAL
@@ -70,7 +73,7 @@ def inspect(label,lon,lat):
     return sample_point.getNumber('label')
 
 
-def run(        
+def annual(        
         src,
         dest=None,
         year=YEAR,
@@ -104,14 +107,86 @@ def run(
     else:
         squash=config.get('squash_keys')
     if not dest:
-        dest=_prefix_path(prefix,src)
+        dest=_prefix_path(f'{prefix}.{year}',src)
     df=pd.read_csv(src)
     utils.log('generating dynamic world point values',
+        src=src,
+        dest=dest,
         year=year,
         min_crop=min_crop,
         min_cropish=min_cropish,
+        nb_points=df.shape[0],
+        squash_columns=squash)
+    timer=utils.Timer()
+    utils.log(f'[{timer.start()}] ...inspecting rows')
+    df.loc[:,squash]=df.apply(
+        _inpsect_row,
+        axis=1,
+        result_type='expand',
+        lon=lon,lat=lat,cols=squash,labels_dict=labels_dict)
+    utils.log(f'[{timer.time()}] ...earthengine request ({timer.state()})')
+    out=df.to_dict('records')
+    df_dict_list=ee.List(df.to_dict('records'))
+    df=pd.DataFrame(df_dict_list.getInfo())
+    df.to_csv(dest,index=False)
+    utils.log(f'[{timer.stop()}] complete ({timer.delta()})')
+
+
+def aggregate(        
+        src,
+        dest=None,
+        year=YEAR,
+        month=MONTH,
+        day=DAY,
+        start_date=None,
+        duration=DURATION,
+        duration_type=DURATION_TYPE,
+        lon=LON_COLUMN,
+        lat=LAT_COLUMN,
+        prefix=DEST_PREFIX,
+        noisy=NOISY,
+        squash=AGGREGATE_SQUASH_KEYS):
+    """ generate labels values for pts and labels in csv
+
+    Args:
+        - src<str>: path or url to source csv
+        - dest<str|None>: destination (if None uses `{prefix}.{src}`)
+        - year<int>: start year to produce aggregate labels
+        - month<int>: start month to produce aggregate labels
+        - day<int>: start day to produce aggregate labels
+        - start_date<str[yyyy-mm-dd]>: start date. overrides ymd above
+        - duration<int>: number of "duration_type" units till end-date
+        - duration_type<str>: one of "year", "month", "day"
+        - lon<str>: longitude column name 
+        - lat<str>: latitude column name 
+        - min_crop<int>: minimum number of crop months for crop-rule
+        - min_cropish<int>: minimum number of crop-ish months for crop-rule
+        - prefix<str>: destination prefix (only used if dest not provided)
+        - noisy<bool>: print log statements
+        - squash<list<str>>: list of columns to use as squash keys
+
+    Action: 
+        label values are saved to csv
+    """
+    labels_dict=labels.aggregate_dw(year,month,day,duration,duration_type,start_date)
+    if squash:
+        squash=squash.split(',')
+    else:
+        squash=config.get('aggregate_squash_keys')
+    if not dest:
+        if not start_date:
+            start_date=f'{year}{month:02}{day:02}'
+        dest=_prefix_path(f'{prefix}.{start_date}',src)
+    df=pd.read_csv(src)
+    utils.log('generating dynamic world point values',
         src=src,
         dest=dest,
+        year=year,
+        month=month,
+        day=day,
+        duration=duration,
+        duration_type=duration_type,
+        start_date=start_date,
         nb_points=df.shape[0],
         squash_columns=squash)
     timer=utils.Timer()
@@ -135,7 +210,8 @@ def accuracy(
         label,
         prefix=ACCURACY_DEST_PREFIX,
         noisy=NOISY,
-        squash=SQUASH_KEYS):
+        squash=SQUASH_KEYS,
+        run_type=None):
     """ generate accuracy results in csv
 
     Args:
@@ -145,6 +221,7 @@ def accuracy(
         - prefix<str>: destination prefix (only used if dest not provided)
         - noisy<bool>: print log statements
         - squash<list<str>>: list of columns to use as squash keys
+        - run_type<str|None>: "aggregate" if not performing annual squash
 
     Action: 
         accuracy results are saved to a csv
@@ -152,7 +229,10 @@ def accuracy(
     if squash:
         squash=squash.split(',')
     else:
-        squash=config.get('squash_keys')
+        if run_type=="aggregate":
+            squash=config.get('aggregate_squash_keys')
+        else:
+            squash=config.get('squash_keys')
     dest=_prefix_path(prefix,src)
     df=pd.read_csv(src)
     utils.log('generating aggrement assement',
@@ -175,7 +255,8 @@ def confusion(
         prefix=CONFUSION_DEST_PREFIX,
         noisy=NOISY,
         squash=SQUASH_KEYS,
-        normalize=NORMALIZE_CM):
+        normalize=NORMALIZE_CM,
+        run_type=None):
     """ generate confusion-matrix results in csvs
 
     Args:
@@ -185,6 +266,7 @@ def confusion(
         - prefix<str>: destination prefix (only used if dest not provided)
         - noisy<bool>: print log statements
         - squash<list<str>>: list of columns to use as squash keys
+        - run_type<str|None>: "aggregate" if not performing annual squash
 
     Action: 
         confusion matrices are saved to individual csv's for each
@@ -193,7 +275,10 @@ def confusion(
     if squash:
         squash=squash.split(',')
     else:
-        squash=config.get('squash_keys')
+        if run_type=="aggregate":
+            squash=config.get('aggregate_squash_keys')
+        else:
+            squash=config.get('squash_keys')
     df=pd.read_csv(src)
     dest=_prefix_path(f'{prefix}.<squash>',src)
     utils.log('generating confusion matrices',

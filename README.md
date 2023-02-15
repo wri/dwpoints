@@ -44,7 +44,7 @@ lon,lat
 Then you can generate the various dynamic-world labels:
 
 ```bash
-$ dwpoints run sample_points.csv
+$ dwpoints annual sample_points.csv
 ```
 
 Which produces the csv "dwpoints.sample_points.csv":
@@ -66,6 +66,15 @@ $ dwpoints confusion sample_points.csv label
 
 See the [walkthrough](#example) below for a detailed example of accuracy/confusion.
 
+Simlarly if you want to run for different time periods us the `aggregate`-verb rather than `annual`.  Note when running the analysis you'll also need to include the `--run_type aggregate` flag.
+
+
+```bash
+$ dwpoints aggregate sample_points.csv --start_date 2018-01-01 --duration 3
+$ dwpoints accuracy sample_points.csv label --run_type aggregate
+$ dwpoints confusion sample_points.csv label --run_type aggregate
+```
+
 
 <a href="#example"></a>
 ##### EXAMPLE WALK THROUGH
@@ -75,7 +84,7 @@ This example uses some sample points in generated stored in GCS (https://storage
 First we'll generate the dw-values:
 
 ```bash
-$ dwpoints run https://storage.googleapis.com/dynamic-world-public/dw-exports/point_data/dev_dw_sample_pts-500.csv
+$ dwpoints annual https://storage.googleapis.com/dynamic-world-public/dw-exports/point_data/dev_dw_sample_pts-500.csv
 
 [INFO] DW_POINTS: generating dynamic world point values
 ----------------------------------------------------------------------------------------------------
@@ -250,8 +259,8 @@ Commands:
 ```
 
 ```bash
-$ dwpoints run --help
-Usage: dwpoints run [OPTIONS] SRC [DEST]
+$ dwpoints annual --help
+Usage: dwpoints annual [OPTIONS] SRC [DEST]
 
   generate dwpoints file
 

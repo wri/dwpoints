@@ -34,8 +34,10 @@ def generate(
         nb_builtup=c.NB_BUILTUP,
         prefix=c.DEST_PREFIX,
         day=c.DAY,
+        month=c.MONTH,
         duration=c.DURATION,
         duration_type=c.DURATION_TYPE,
+        aggregate_squash_keys=c.AGGREGATE_SQUASH_KEYS,
         noisy=c.NOISY,
         squash=None,
         force=False):
@@ -54,8 +56,10 @@ def generate(
         'min_cropish': min_cropish,
         'prefix': prefix,
         'day': day,
+        'month': month,
         'duration': duration,
         'duration_type': duration_type,
+        'aggregate_squash_keys': aggregate_squash_keys,
         'noisy': noisy
     }
     if not force and os.path.exists(c.DWPOINTS_CONFIG_PATH):

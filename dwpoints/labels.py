@@ -103,7 +103,7 @@ def aggregate_dw(year=None,month=None,day=c.DAY,duration=c.DURATION,duration_typ
         start_date=ee.Date(start_date)
     else:
         start_date=ee.Date.fromYMD(year,month,day)
-    end_data=start_date.advance(duration,duration_type)
+    end_date=start_date.advance(duration,duration_type)
     dw=DW.filterDate(start_date,end_date).select(c.CLASSES)
     dw_mean_label=probabilites_to_class(dw.mean())
     dw_median_label=probabilites_to_class(dw.median())
