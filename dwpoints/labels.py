@@ -115,9 +115,9 @@ def annual_dw(year,min_crop=c.MIN_CROP,min_cropish=c.MIN_CROPISH,min_snow=c.MIN_
     dw_median_cr=crop_rule(dw_monthly_median_label_mode,dw_median_label,min_crop,min_cropish)
     dw_mean_cr=crop_rule(dw_monthly_mean_label_mode,dw_mean_label,min_crop,min_cropish)
     # example of snow/br/cr_rule
-    # dw_median_sr=snow_rule(dw_monthly_median_label_mode,dw_median,min_snow)
-    # dw_median_sr_cr=crop_rule(dw_monthly_median_label_mode,dw_median_sr,min_crop,min_cropish)
-    # dw_median_sr_cr_br=snow_rule(dw_monthly_median_label_mode,dw_median_sr_cr,nb_builtup)
+    dw_median_sr=snow_rule(dw_monthly_median_label_mode,dw_median,min_snow)
+    dw_median_sr_cr=crop_rule(dw_monthly_median_label_mode,dw_median_sr,min_crop,min_cropish)
+    dw_median_sr_cr_br=snow_rule(dw_monthly_median_label_mode,dw_median_sr_cr,nb_builtup)
     return {
         'dw_mode': dw_mode,
         'dw_mean_label': dw_mean_label,
@@ -125,5 +125,8 @@ def annual_dw(year,min_crop=c.MIN_CROP,min_cropish=c.MIN_CROPISH,min_snow=c.MIN_
         'dw_monthly_mean_label_mode': dw_monthly_mean_label_mode,
         'dw_monthly_median_label_mode': dw_monthly_median_label_mode,
         'dw_median_cr': dw_median_cr,
-        'dw_mean_cr': dw_mean_cr
+        'dw_mean_cr': dw_mean_cr,
+        'dw_median_sr': dw_median_sr,
+        'dw_median_sr_cr': dw_median_sr_cr,
+        'dw_median_sr_cr_br': dw_median_sr_cr_br
       }
