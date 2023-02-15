@@ -4,7 +4,7 @@ from pprint import pprint
 import pandas as pd
 import dwpoints.constants as c
 
-
+EPS=1e-8
 #
 # print/log
 #
@@ -76,6 +76,10 @@ def get_acc_df(df,label_col,pred_cols):
 
 def get_cm_df(df,label_values,label_col,pred_col,dummy_prefix=c.DUMMY_PREFIX):
     dummies=pd.DataFrame(df[label_col]).join(pd.get_dummies(df[pred_col],prefix=dummy_prefix))
+    required_cols=[f'{dummy_prefix}_{v}' for v in label_values]
+    for col in required_cols:
+        if col not in dummies:
+            dummies[col]=0
     cm=dummies.groupby(label_col).sum()
     cm['total']=cm.sum(axis=1)
     col_total=cm.sum(axis=0)
@@ -89,7 +93,7 @@ def normalize_cm(cm_df,label_values,dummy_prefix=c.DUMMY_PREFIX):
     rows=[f'{v}' for v in label_values]
     column_counts=cm_df.loc['total']
     column_counts=pd.DataFrame([column_counts])
-    cm_df=cm_df.loc[rows,cols].divide(cm_df.loc['total',cols]).join(cm_df['total'])
+    cm_df=cm_df.loc[rows,cols].divide(cm_df.loc['total',cols].add(EPS)).join(cm_df['total'])
     return pd.concat([cm_df,column_counts])
 
 
