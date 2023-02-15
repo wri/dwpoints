@@ -91,7 +91,7 @@ def snow_rule(monthly_ic,probs,min_snow):
 def bu_rule(monthly_ic,label,nb_builtup):
   monthly_ic=ee.ImageCollection(monthly_ic)
   bu_count=ee.Image(monthly_ic.map(is_builtup).reduce(ee.Reducer.sum())).rename(['bu_count'])
-  bu_pixels=bu_count.gt(nb_builtup).multiply(c.BUILTUP_VALUE)
+  bu_pixels=bu_count.gte(nb_builtup).multiply(c.BUILTUP_VALUE)
   return ee.Image(label).where(bu_pixels,bu_pixels)
 
 
@@ -131,7 +131,7 @@ def annual_dw(year,min_crop=c.MIN_CROP,min_cropish=c.MIN_CROPISH,min_snow=c.MIN_
     # example of snow/br/cr_rule
     dw_median_sr=snow_rule(dw_monthly_median_label_mode,dw_median,min_snow)
     dw_median_sr_cr=crop_rule(dw_monthly_median_label_mode,dw_median_sr,min_crop,min_cropish)
-    dw_median_sr_cr_br=snow_rule(dw_monthly_median_label_mode,dw_median_sr_cr,nb_builtup)
+    dw_median_sr_cr_br=bu_rule(dw_monthly_median_label_mode,dw_median_sr_cr,nb_builtup)
     return {
         'dw_mode': dw_mode,
         'dw_mean_label': dw_mean_label,
