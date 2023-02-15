@@ -30,6 +30,8 @@ def generate(
         lat=c.LAT_COLUMN,
         min_crop=c.MIN_CROP,
         min_cropish=c.MIN_CROPISH,
+        min_snow=c.MIN_SNOW,
+        nb_builtup=c.NB_BUILTUP,
         prefix=c.DEST_PREFIX,
         noisy=c.NOISY,
         squash=None,

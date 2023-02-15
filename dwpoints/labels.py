@@ -14,7 +14,17 @@ ee.Initialize()
 # DATA
 #
 DW=ee.ImageCollection("GOOGLE/DYNAMICWORLD/V1")
-
+NO_SNOW_IM=ee.Dictionary({
+  'water': 1,
+  'trees': 1,
+  'grass': 1,
+  'flooded_vegetation': 1,
+  'crops': 1,
+  'shrub_and_scrub': 1,
+  'built': 1,
+  'bare': 1,
+  'snow_and_ice': 0
+}).toImage(c.CLASSES)
 
 #
 # METHODS
@@ -48,6 +58,15 @@ def is_crop(label):
   return label.eq(c.CROP_VALUE)
 
 
+def is_snow(label):
+  label=ee.Image(label)
+  return label.eq(c.SNOW_VALUE)
+
+def is_builtup(label):
+  label=ee.Image(label)
+  return label.eq(c.BUILTUP_VALUE)
+
+
 def is_cropish(label):
   label=ee.Image(label)
   return is_crop(label).Or(label.eq(2).Or(label.eq(5).Or(label.eq(7))))
@@ -57,8 +76,23 @@ def crop_rule(monthly_ic,label,min_crop,min_cropish):
   monthly_ic=ee.ImageCollection(monthly_ic)
   crop_count=ee.Image(monthly_ic.map(is_crop).reduce(ee.Reducer.sum())).rename(['crop_count'])
   cropish_count=ee.Image(monthly_ic.map(is_cropish).reduce(ee.Reducer.sum())).rename(['cropish_count'])
-  crop_im=crop_count.gte(min_crop).And(cropish_count.gte(min_cropish)).multiply(c.CROP_VALUE).selfMask().rename(['label'])
-  return ee.Image(label).where(crop_im,crop_im)
+  crop_pixels=crop_count.gte(min_crop).And(cropish_count.gte(min_cropish)).multiply(c.CROP_VALUE).selfMask().rename(['label'])
+  return ee.Image(label).where(crop_pixels,crop_pixels)
+
+
+def snow_rule(monthly_ic,probs,min_months):
+  monthly_ic=ee.ImageCollection(monthly_ic)
+  label=probabilites_to_class(ee.Image(probs).multiply(NO_SNOW_IM))
+  snow_count=ee.Image(monthly_ic.map(is_snow).reduce(ee.Reducer.sum())).rename(['snow_count'])
+  snow_pixels=snow_count.gt(min_months).multiply(c.SNOW_VALUE)
+  return ee.Image(label).where(snow_pixels,snow_pixels)
+
+
+def bu_rule(monthly_ic,label,nb_months):
+  monthly_ic=ee.ImageCollection(monthly_ic)
+  bu_count=ee.Image(monthly_ic.map(is_builtup).reduce(ee.Reducer.sum())).rename(['bu_count'])
+  bu_pixels=bu_count.gt(nb_months).multiply(c.BUILTUP_VALUE)
+  return ee.Image(label).where(bu_pixels,bu_pixels)
 
 
 #

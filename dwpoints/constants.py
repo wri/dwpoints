@@ -14,6 +14,8 @@ SQUASH_KEYS=[
 NOISY=True
 MIN_CROP=2
 MIN_CROPISH=11
+MIN_SNOW=10
+NB_BUILTUP=6
 YEAR=2022
 DEST_PREFIX='dwpoints'
 ACCURACY_DEST_PREFIX='acc'
@@ -36,6 +38,8 @@ CONFIG_DICT={
     "squash_keys": SQUASH_KEYS,
     "min_crop": MIN_CROP,
     "min_cropish": MIN_CROPISH,
+    "min_snow": MIN_SNOW,
+    "nb_builtup": NB_BUILTUP,
     "noisy": NOISY,
     "prefix": DEST_PREFIX,
     "normalize": NORMALIZE_CM,
@@ -53,6 +57,8 @@ CRS='epsg:4326'
 SCALE=10
 MAX_PIX=9*4
 CROP_VALUE=4
+BUILTUP_VALUE=6
+SNOW_VALUE=8
 CLASSES=[
     "water", 
     "trees", 

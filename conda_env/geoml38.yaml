@@ -22,10 +22,11 @@ dependencies:
   - earthengine-api
   - matplotlib
   - seaborn
-  - tensorflow-deps
+  - tensorflow
+  # - tensorflow-deps #<== mac-metal
   - unidecode
   - geemap
   - pip:
     - radiant_mlhub
-    - tensorflow-macos
-    - tensorflow-metal
+    # - tensorflow-macos #<== mac-metal
+    # - tensorflow-metal #<== mac-metal
