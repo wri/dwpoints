@@ -6,7 +6,7 @@
 LON_COLUMN='lon'
 LAT_COLUMN='lat'
 SQUASH_KEYS=[
-    'dw_mode',
+    # requesting too many squash-keys leads to error: "Request payload size exceeds the limit: 10485760 bytes"
     'dw_median_label',
     'dw_median_cr',
     'dw_median_sr_cr_br'
