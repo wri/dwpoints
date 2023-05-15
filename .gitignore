@@ -16,6 +16,8 @@ dwpoints-config.yaml
 # SUBLIME
 *sftp-config.json*
 
+# VSCode
+.vscode
 
 # GITNB
 notebooks/
